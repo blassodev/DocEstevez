@@ -1,11 +1,16 @@
 import styled from "styled-components";
-
-export const DarkContainer = styled.div`
-  background-color: #1f1f11;
-  width: 100vw;
-  height: 100vh;
-`;
+import { Paper } from "@material-ui/core";
 
 export const MainContainer = styled.div`
   display: flex;
+  text-align: center;
+  flex-direction: column;
+  align-items: center;
+`;
+
+export const DirectAccessCard = styled(Paper)`
+  display: grid;
+  grid-template-columns: 25% 25% 25% 25%;
+  width: 80vw;
+  height: 60vh;
 `;
