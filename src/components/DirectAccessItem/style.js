@@ -1,17 +1,26 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const BaseComponent = styled.div`
-    display: flex;
-    flex-direction: column;
-    & a{
-        color: white;
-        &:hover{
-            color: gray;
-        }
+  padding: 10px;
+  margin: 5px;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  max-height: 120px;
+  &:hover {
+    color: gray;
+    & svg {
+      color: gray;
     }
-    & svg{
-        width: 100px;
-        height: 100px;
+    & a {
+      color: gray;
     }
-
+  }
+  & a {
+    color: white;
+  }
+  & svg {
+    width: 100px;
+    height: 100px;
+  }
 `;

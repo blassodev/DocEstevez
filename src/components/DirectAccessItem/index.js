@@ -1,14 +1,17 @@
 import React from "react";
-import * as SC from './style'
+import * as SC from "./style";
 import { Link } from "react-router-dom";
 
 function DirectAccessItem(props) {
-    return(
-        <SC.BaseComponent>
-            <Link to={props.link}/>
-            {props.icon}
-        </SC.BaseComponent>
-    );
+  function handleOnClick() {}
+  return (
+    <SC.BaseComponent onClick={handleOnClick}>
+      <Link to={props.link}>
+        {props.children}
+        {props.icon}
+      </Link>
+    </SC.BaseComponent>
+  );
 }
 
 export default DirectAccessItem;
