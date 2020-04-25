@@ -4,8 +4,7 @@ import { Typography } from "@material-ui/core";
 import DirectAccessItem from "../../components/DirectAccessItem";
 import PersonIcon from "@material-ui/icons/Person";
 import PersonAddIcon from "@material-ui/icons/PersonAdd";
-import {DarkContainer} from '../../styles/DarkContainer'
-
+import { DarkContainer } from "../../styles/DarkContainer";
 
 function Main() {
   return (
