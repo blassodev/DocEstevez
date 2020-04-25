@@ -1,0 +1,40 @@
+{
+  "pagination": {
+    "labelDisplayedRows": "{from}-{to} de {count}",
+    "labelRowsSelect": "Filas",
+    "labelRowsPerPage": "Filas por página",
+    "firstAriaLabel": "Primera página",
+    "firstTooltip": "Primera página",
+    "previousAriaLabel": "Página anterior",
+    "previousTooltip": "Página anterior",
+    "nextTooltip": "Siguiente página",
+    "nextAriaLabel": "Siguiente página",
+    "lastAriaLabel": "Última página",
+    "lastTooltip": "Última página"
+
+  },
+  "toolbar": {
+    "nRowsSelected": "{0} fila(s) seleccionada(s)",
+    "searchPlaceholder": "Buscar",
+    "searchTooltip": "Buscar",
+    "exportName": "Exportar como CSV",
+    "exportTitle": "Exportar",
+    "exportAriaLabel": "Exportar",
+    "addRemoveColumns": "Añadir o eliminar columnas"
+
+  },
+  "header": {
+    "actions": "Opciones"
+  },
+  "body": {
+    "emptyDataSourceMessage": "Nada que mostrar",
+    "filterRow": {
+      "filterTooltip": "Filtro"
+    },
+    "editRow": {
+      "deleteText": "Estas seguro de querer eliminar esta fila?",
+      "cancelTooltip": "Cancelar",
+      "saveTooltip": "Guardar"
+    }
+  }
+}
