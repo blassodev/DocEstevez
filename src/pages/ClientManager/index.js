@@ -21,6 +21,8 @@ import AddBoxIcon from "@material-ui/icons/AddBox";
 import CloseIcon from "@material-ui/icons/Close";
 import spanishTable from "../../lang/material-table/spanish.json";
 import * as SC from "./style";
+import { useClient } from "../../hooks/useClient";
+import {useHistory} from 'react-router-dom'
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -39,38 +41,8 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 function ClientManager(props) {
-  const [userData, setUserData] = useState([
-    {
-      name: "Blas",
-      surname: "Santome",
-      dni: "54229366G",
-      age: 18,
-      gender: "Hombre",
-      height: 1.8,
-      measurements: [
-        {
-          date: "25/04/2020",
-          weight: 74,
-          physicalActivity: "active",
-        },
-      ],
-    },
-    {
-      name: "Antonio",
-      surname: "Santome",
-      dni: "54229266G",
-      age: 18,
-      gender: "Hombre",
-      height: 1.8,
-      measurements: [
-        {
-          date: "25/04/2020",
-          weight: 74,
-          physicalActivity: "active",
-        },
-      ],
-    },
-  ]);
+  const history = useHistory();
+  const { setUsersData, usersData } = useClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [createClient, setCreateClient] = useState({
     name: "",
@@ -89,7 +61,7 @@ function ClientManager(props) {
   });
   function addMeasurement(userDni, newMeasurement) {
     // We call dispatch function for userData state
-    setUserData((prevUserData) => {
+    setUsersData((prevUserData) => {
       const updatedUserData = prevUserData.map((user) => {
         if (user.dni === userDni) {
           return {
@@ -111,12 +83,13 @@ function ClientManager(props) {
     });
   }
   function addClient(newClient) {
-    setUserData((prevUserData) => {
+    setUsersData((prevUserData) => {
       return [...prevUserData, newClient];
     });
   }
   function deleteClient(client) {
-    setUserData((prevUserData) => {
+    setUsersData((prevUserData) => {
+      console.log(prevUserData);
       return prevUserData.filter(
         (_, idx) => idx !== prevUserData.indexOf(client)
       );
@@ -177,7 +150,7 @@ function ClientManager(props) {
     });
   };
   const handleSubmit = () => {
-    setUserData((prevUserData) => {
+    setUsersData((prevUserData) => {
       return [...prevUserData, createClient];
     });
     handleCreateClose();
@@ -189,7 +162,7 @@ function ClientManager(props) {
         <MaterialTable
           localization={spanishTable}
           columns={columns}
-          data={userData}
+          data={usersData}
           title="Clientes"
           options={{
             exportButton: true,
@@ -211,6 +184,9 @@ function ClientManager(props) {
                   resolve();
                 }, 1000);
               }),
+          }}
+          onRowClick={(event, rowData, togglePanel) => {
+            history.push(`/ClientDetails/${rowData.dni}`)
           }}
         />
       </DarkContainer>
