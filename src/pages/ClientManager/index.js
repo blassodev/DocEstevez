@@ -8,9 +8,9 @@ import {
   IconButton,
   Button,
   Typography,
-  Slide,
   createStyles,
 } from "@material-ui/core";
+import Slide from '@material-ui/core/Slide';
 import { makeStyles } from "@material-ui/core/styles";
 import { Add } from "@material-ui/icons";
 import CloseIcon from "@material-ui/icons/Close";
@@ -27,6 +27,10 @@ const useStyles = makeStyles((theme) =>
     },
   })
 );
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function ClientManager(props) {
   const [userData, setUserData] = useState([
@@ -122,42 +126,39 @@ function ClientManager(props) {
     };
     addMeasurement("54229266G", newMeasurement);
     addClient(newClient);
+    
     switch (props.match.params.option) {
       case "add":
+        setCreateOpen(true);
         break;
       default:
         break;
     }
   }, [props.match.params.option]);
-  const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
-  function handleCreateOpen() {
+
+  const handleCreateOpen = () => {
     setCreateOpen(true);
-  }
-  function handleCreateClose() {
+  };
+  const handleCreateClose = () => {
     setCreateOpen(false);
-  }
+  };
   const classes = useStyles();
   return (
     <div>
-    <DarkContainer>
-      <MaterialTable
-        localization={spanishTable}
-        columns={columns}
-        data={userData}
-        title="Clientes"
-      />
-            <Button onClick={handleCreateOpen}>
-        Añadir user
-      </Button>
-    </DarkContainer>
-    <Dialog
+      <DarkContainer>
+        <MaterialTable
+          localization={spanishTable}
+          columns={columns}
+          data={userData}
+          title="Clientes"
+        />
+        <Button onClick={handleCreateOpen}>Añadir user</Button>
+      </DarkContainer>
+      <Dialog
         fullScreen
         open={createOpen}
         onClose={handleCreateClose}
-        TransitionComponent={Transition}
-      >
+        TransitionComponent={Transition}>
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton
@@ -169,7 +170,7 @@ function ClientManager(props) {
               <CloseIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Añadir ejercicio
+              Añadir Cliente
             </Typography>
             <Button autoFocus color="inherit">
               guardar
@@ -177,7 +178,6 @@ function ClientManager(props) {
           </Toolbar>
         </AppBar>
       </Dialog>
-
     </div>
   );
 }
