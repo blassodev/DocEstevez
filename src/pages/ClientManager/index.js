@@ -10,9 +10,9 @@ import {
   Typography,
   createStyles,
 } from "@material-ui/core";
-import Slide from '@material-ui/core/Slide';
+import Slide from "@material-ui/core/Slide";
 import { makeStyles } from "@material-ui/core/styles";
-import { Add } from "@material-ui/icons";
+import AddBoxIcon from "@material-ui/icons/AddBox";
 import CloseIcon from "@material-ui/icons/Close";
 import spanishTable from "../../lang/material-table/spanish.json";
 
@@ -94,6 +94,12 @@ function ClientManager(props) {
       return [...prevUserData, newClient];
     });
   }
+  function deleteClient(client) {
+    setUserData((prevUserData) => {
+      prevUserData.splice(prevUserData.indexOf(client));
+      return prevUserData;
+    });
+  }
   const columns = [
     { title: "Dni", field: "dni" },
     { title: "Nombre", field: "name" },
@@ -126,7 +132,7 @@ function ClientManager(props) {
     };
     addMeasurement("54229266G", newMeasurement);
     addClient(newClient);
-    
+
     switch (props.match.params.option) {
       case "add":
         setCreateOpen(true);
@@ -151,14 +157,35 @@ function ClientManager(props) {
           columns={columns}
           data={userData}
           title="Clientes"
+          options={{
+            exportButton: true,
+          }}
+          actions={[
+            {
+              icon: () => <AddBoxIcon />,
+              position: "toolbar",
+              tooltip: "Crear ejercicio",
+              onClick: handleCreateOpen,
+            },
+          ]}
+          editable={{
+            onRowDelete: (oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  deleteClient(oldData);
+
+                  resolve();
+                }, 1000);
+              }),
+          }}
         />
-        <Button onClick={handleCreateOpen}>Añadir user</Button>
       </DarkContainer>
       <Dialog
         fullScreen
         open={createOpen}
         onClose={handleCreateClose}
-        TransitionComponent={Transition}>
+        TransitionComponent={Transition}
+      >
         <AppBar className={classes.appBar}>
           <Toolbar>
             <IconButton
