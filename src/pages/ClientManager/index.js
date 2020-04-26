@@ -8,6 +8,11 @@ import {
   IconButton,
   Button,
   Typography,
+  TextField,
+  FormControlLabel,
+  RadioGroup,
+  Radio,
+  FormLabel,
   createStyles,
 } from "@material-ui/core";
 import Slide from "@material-ui/core/Slide";
@@ -15,6 +20,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import AddBoxIcon from "@material-ui/icons/AddBox";
 import CloseIcon from "@material-ui/icons/Close";
 import spanishTable from "../../lang/material-table/spanish.json";
+import * as SC from "./style";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -66,6 +72,21 @@ function ClientManager(props) {
     },
   ]);
   const [createOpen, setCreateOpen] = useState(false);
+  const [createClient, setCreateClient] = useState({
+    name: "",
+    surname: "",
+    dni: "",
+    age: 0,
+    gender: "",
+    height: 0,
+    measurements: [
+      {
+        date: "",
+        weight: 0,
+        physicalActivity: "",
+      },
+    ],
+  });
   function addMeasurement(userDni, newMeasurement) {
     // We call dispatch function for userData state
     setUserData((prevUserData) => {
@@ -96,8 +117,9 @@ function ClientManager(props) {
   }
   function deleteClient(client) {
     setUserData((prevUserData) => {
-      prevUserData.splice(prevUserData.indexOf(client));
-      return prevUserData;
+      return prevUserData.filter(
+        (_, idx) => idx !== prevUserData.indexOf(client)
+      );
     });
   }
   const columns = [
@@ -147,6 +169,18 @@ function ClientManager(props) {
   };
   const handleCreateClose = () => {
     setCreateOpen(false);
+  };
+  const handleChange = (event) => {
+    setCreateClient({
+      ...createClient,
+      [event.target.name]: event.target.value,
+    });
+  };
+  const handleSubmit = () => {
+    setUserData((prevUserData) => {
+      return [...prevUserData, createClient];
+    });
+    handleCreateClose();
   };
   const classes = useStyles();
   return (
@@ -199,11 +233,72 @@ function ClientManager(props) {
             <Typography variant="h6" className={classes.title}>
               Añadir Cliente
             </Typography>
-            <Button autoFocus color="inherit">
+            <Button autoFocus color="inherit" onClick={handleSubmit}>
               guardar
             </Button>
           </Toolbar>
         </AppBar>
+        <SC.DialogForm onSubmit={(e) => handleSubmit(e)}>
+          <TextField
+            label="Nombre"
+            name="name"
+            onChange={(e) => handleChange(e)}
+            value={createClient["name"]}
+          />
+          <TextField
+            label="Apellidos"
+            name="surname"
+            onChange={(e) => handleChange(e)}
+            value={createClient["surname"]}
+          />
+          <TextField
+            label="DNI"
+            name="dni"
+            onChange={(e) => handleChange(e)}
+            value={createClient["dni"]}
+          />
+          <TextField
+            label="Edad"
+            name="age"
+            onChange={(e) => handleChange(e)}
+            type="number"
+            value={createClient["age"]}
+          />
+          <TextField
+            label="Altura"
+            onChange={(e) => handleChange(e)}
+            type="number"
+            name="height"
+            value={createClient["height"]}
+          />
+          <FormLabel
+            component="legend"
+            onChange={(e) => handleChange(e)}
+            style={{ marginTop: "10px" }}
+          >
+            Sexo
+          </FormLabel>
+          <RadioGroup
+            row
+            defaultValue="top"
+            name="gender"
+            onChange={(e) => handleChange(e)}
+            value={createClient["gender"]}
+          >
+            <FormControlLabel
+              value="Hombre"
+              control={<Radio color="primary" />}
+              label="Hombre"
+              labelPlacement="start"
+            />
+            <FormControlLabel
+              value="Mujer"
+              control={<Radio color="primary" />}
+              label="Mujer"
+              labelPlacement="start"
+            />
+          </RadioGroup>
+        </SC.DialogForm>
       </Dialog>
     </div>
   );
