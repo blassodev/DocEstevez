@@ -6,6 +6,7 @@ import { MuiThemeProvider } from "@material-ui/core";
 import Main from "./pages/Main";
 import ClientManager from "./pages/ClientManager";
 import { ClientProvider } from "./context/Client";
+import ClientDetails from "./pages/ClientDetails";
 
 function App() {
   return (
@@ -19,6 +20,10 @@ function App() {
             path="/ClientManager/:option"
             component={ClientManager}
           />
+          <Route
+          exact
+          path="/ClientDetails/:dni"
+          component={ClientDetails}/>
         </Switch>
       </ClientProvider>
     </MuiThemeProvider>
