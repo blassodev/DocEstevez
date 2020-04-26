@@ -22,7 +22,7 @@ import CloseIcon from "@material-ui/icons/Close";
 import spanishTable from "../../lang/material-table/spanish.json";
 import * as SC from "./style";
 import { useClient } from "../../hooks/useClient";
-import {useHistory} from 'react-router-dom'
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -186,7 +186,7 @@ function ClientManager(props) {
               }),
           }}
           onRowClick={(event, rowData, togglePanel) => {
-            history.push(`/ClientDetails/${rowData.dni}`)
+            history.push(`/ClientDetails/${rowData.dni}`);
           }}
         />
       </DarkContainer>

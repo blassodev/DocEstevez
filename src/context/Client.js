@@ -2,7 +2,7 @@ import React, { createContext, useMemo, useState } from "react";
 
 export const ClientContext = createContext(null);
 
-export function ClientProvider ({ children })  {
+export function ClientProvider({ children }) {
   const [usersData, setUsersData] = useState([
     {
       name: "Blas",
@@ -49,4 +49,4 @@ export function ClientProvider ({ children })  {
       {children}
     </ClientContext.Provider>
   );
-};
+}

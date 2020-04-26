@@ -11,7 +11,6 @@
     "nextAriaLabel": "Siguiente página",
     "lastAriaLabel": "Última página",
     "lastTooltip": "Última página"
-
   },
   "toolbar": {
     "nRowsSelected": "{0} fila(s) seleccionada(s)",
@@ -21,7 +20,6 @@
     "exportTitle": "Exportar",
     "exportAriaLabel": "Exportar",
     "addRemoveColumns": "Añadir o eliminar columnas"
-
   },
   "header": {
     "actions": "Opciones"

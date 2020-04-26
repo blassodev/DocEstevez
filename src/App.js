@@ -20,10 +20,7 @@ function App() {
             path="/ClientManager/:option"
             component={ClientManager}
           />
-          <Route
-          exact
-          path="/ClientDetails/:dni"
-          component={ClientDetails}/>
+          <Route exact path="/ClientDetails/:dni" component={ClientDetails} />
         </Switch>
       </ClientProvider>
     </MuiThemeProvider>
