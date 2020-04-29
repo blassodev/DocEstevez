@@ -33,6 +33,9 @@ const useStyles = makeStyles((theme) =>
       marginLeft: theme.spacing(2),
       flex: 1,
     },
+    table: {
+      padding: "24px",
+    },
   })
 );
 
@@ -89,7 +92,6 @@ function ClientManager(props) {
   }
   function deleteClient(client) {
     setUsersData((prevUserData) => {
-      console.log(prevUserData);
       return prevUserData.filter(
         (_, idx) => idx !== prevUserData.indexOf(client)
       );
@@ -105,28 +107,6 @@ function ClientManager(props) {
   ];
 
   useEffect(() => {
-    const newClient = {
-      name: "Diego",
-      surname: "Davila",
-      dni: "12345678B",
-      age: 45,
-      gender: "Indefinido",
-      height: 1.5,
-      measurements: [
-        {
-          date: "32/02/2020",
-          weight: 120,
-          physicalActivity: "nadena",
-        },
-      ],
-    };
-    const newMeasurement = {
-      date: "algo",
-      weight: 45,
-      physicalActivity: "mucha",
-    };
-    addMeasurement("54229266G", newMeasurement);
-    addClient(newClient);
 
     switch (props.match.params.option) {
       case "add":
@@ -158,8 +138,9 @@ function ClientManager(props) {
   const classes = useStyles();
   return (
     <div>
-      <DarkContainer>
+      <DarkContainer >
         <MaterialTable
+          style={{margin: "50px"}}
           localization={spanishTable}
           columns={columns}
           data={usersData}
@@ -171,7 +152,7 @@ function ClientManager(props) {
             {
               icon: () => <AddBoxIcon />,
               position: "toolbar",
-              tooltip: "Crear ejercicio",
+              tooltip: "Añadir cliente",
               onClick: handleCreateOpen,
             },
           ]}
@@ -182,7 +163,7 @@ function ClientManager(props) {
                   deleteClient(oldData);
 
                   resolve();
-                }, 1000);
+                }, 500);
               }),
           }}
           onRowClick={(event, rowData, togglePanel) => {
@@ -256,7 +237,6 @@ function ClientManager(props) {
           </FormLabel>
           <RadioGroup
             row
-            defaultValue="top"
             name="gender"
             onChange={(e) => handleChange(e)}
             value={createClient["gender"]}
