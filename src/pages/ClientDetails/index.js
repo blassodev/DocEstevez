@@ -4,7 +4,9 @@ import MaterialTable from "material-table";
 import spanishTable from "../../lang/material-table/spanish.json";
 import { useHistory } from "react-router-dom";
 import { useClient } from "../../hooks/useClient";
-import CustomChart from '../../components/CustomChart'
+import CustomChart from "../../components/CustomChart";
+import { IconButton } from "@material-ui/core";
+import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 
 function ClientDetails(props) {
   const history = useHistory();
@@ -18,6 +20,28 @@ function ClientDetails(props) {
             ...user,
             measurements: [
               ...user.measurements,
+              {
+                date: newMeasurement.date,
+                weight: newMeasurement.weight,
+                physicalActivity: newMeasurement.physicalActivity,
+              },
+            ],
+          };
+        }
+
+        return user;
+      });
+      return updatedUserData;
+    });
+  }
+  function addMeasurementWNM(newMeasurement) {
+    // We call dispatch function for userData state
+    setUsersData((prevUserData) => {
+      const updatedUserData = prevUserData.map((user) => {
+        if (user.dni === props.match.params.dni) {
+          return {
+            ...user,
+            measurements: [
               {
                 date: newMeasurement.date,
                 weight: newMeasurement.weight,
@@ -50,11 +74,76 @@ function ClientDetails(props) {
       },
     },
   ];
+  if (!usersData[selectedClientIndex].measurements) {
+    return (
+      <DarkContainer
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <IconButton
+          onClick={() => history.push("/ClientManager")}
+          style={{ alignSelf: "flex-start", margin: "5px" }}
+        >
+          <ArrowBackRoundedIcon />
+        </IconButton>
+        <MaterialTable
+          localization={spanishTable}
+          columns={columns}
+          data={[]}
+          title={
+            usersData[selectedClientIndex].name +
+            " " +
+            usersData[selectedClientIndex].surname
+          }
+          options={{
+            exportButton: true,
+          }}
+          editable={{
+            onRowAdd: (newData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  {
+                    const now = new Date();
+                    let month = new Date().getMonth() + 1;
+                    if (month.toString.length === 1) month = "0" + month;
+                    newData.date =
+                      now.getDate() + "/" + month + "/" + now.getFullYear();
+                    console.log(newData);
+                    addMeasurementWNM(newData);
+                  }
+                  resolve();
+                }, 1000);
+              }),
+            onRowDelete: (oldData) =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  resolve();
+                }, 1000);
+              }),
+          }}
+        />
+      </DarkContainer>
+    );
+  }
   return (
-    <DarkContainer>
-      {console.log(props.match.params.option)}
+    <DarkContainer
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <IconButton
+        onClick={() => history.push("/ClientManager")}
+        style={{ alignSelf: "flex-start", margin: "5px" }}
+      >
+        <ArrowBackRoundedIcon />
+      </IconButton>
       <MaterialTable
-        style={{ margin: "50px" }}
+        style={{ width: "80vw" }}
         localization={spanishTable}
         columns={columns}
         data={usersData[selectedClientIndex].measurements}
@@ -72,10 +161,11 @@ function ClientDetails(props) {
               setTimeout(() => {
                 {
                   const now = new Date();
-                  let month = new Date().getMonth()+1;
-                  if(month.toString.length===1) month = "0"+month
-                  newData.date = now.getDate() + "/" + month + "/" +  now.getFullYear()
-                  console.log(newData)
+                  let month = new Date().getMonth() + 1;
+                  if (month.toString.length === 1) month = "0" + month;
+                  newData.date =
+                    now.getDate() + "/" + month + "/" + now.getFullYear();
+                  console.log(newData);
                   addMeasurement(newData);
                 }
                 resolve();
@@ -84,19 +174,15 @@ function ClientDetails(props) {
           onRowDelete: (oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                {
-                  /* let data = this.state.data;
-                        const index = data.indexOf(oldData);
-                        data.splice(index, 1);
-                        this.setState({ data }, () => resolve()); */
-                }
                 resolve();
               }, 1000);
             }),
         }}
       />
-                      <CustomChart data={usersData[selectedClientIndex].measurements}/>
 
+      <CustomChart
+        data={usersData ? usersData[selectedClientIndex].measurements : []}
+      />
     </DarkContainer>
   );
 }
