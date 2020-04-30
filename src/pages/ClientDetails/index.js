@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { DarkContainer } from "../../styles/DarkContainer";
 import MaterialTable from "material-table";
 import spanishTable from "../../lang/material-table/spanish.json";
@@ -59,9 +59,58 @@ function ClientDetails(props) {
   const selectedClientIndex = usersData.findIndex(
     (client) => client.dni === props.match.params.dni
   );
+  useEffect(() => {
+    const measurements = usersData[selectedClientIndex].measurements.map(
+      (measurement) => {
+        const imc = Math.round(
+          measurement.weight *
+            Math.pow(usersData[selectedClientIndex].height, 2),
+          2
+        );
+        let tmb = 0;
+        if (usersData[selectedClientIndex].gender === "Hombre") {
+          tmb = Math.round(
+            66 +
+              13.17 * measurement.weight +
+              5 * (5 * usersData[selectedClientIndex].height) -
+              6.75 * usersData[selectedClientIndex].age,
+            2
+          );
+        } else {
+          tmb = Math.round(
+            655 +
+              9.6 * measurement.weight +
+              1.8 * usersData[selectedClientIndex].height +
+              4.7 * usersData[selectedClientIndex].age,
+            2
+          );
+        }
+        return {
+          ...measurement,
+          imc: imc,
+          tmb: tmb,
+        };
+      }
+    );
+    setUsersData((prevUserData) => {
+      const updatedUserData = prevUserData.map((user) => {
+        if (user.dni === props.match.params.dni) {
+          return {
+            ...user,
+            measurements: measurements,
+          };
+        }
+        return user;
+      });
+      return updatedUserData;
+    });
+  }, [props.match.params.dni, setUsersData, selectedClientIndex]);
+
   const columns = [
     { title: "Fecha", field: "date", editable: "never" },
     { title: "Peso", field: "weight" },
+    { title: "IMC", field: "imc" },
+    { title: "TMB", field: "tmb" },
     {
       title: "Actividad Física",
       field: "physicalActivity",
@@ -165,7 +214,6 @@ function ClientDetails(props) {
                   if (month.toString.length === 1) month = "0" + month;
                   newData.date =
                     now.getDate() + "/" + month + "/" + now.getFullYear();
-                  console.log(newData);
                   addMeasurement(newData);
                 }
                 resolve();
