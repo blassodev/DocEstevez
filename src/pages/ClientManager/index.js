@@ -23,6 +23,7 @@ import spanishTable from "../../lang/material-table/spanish.json";
 import * as SC from "./style";
 import { useClient } from "../../hooks/useClient";
 import { useHistory } from "react-router-dom";
+import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -45,6 +46,9 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function ClientManager(props) {
   const history = useHistory();
+  const now = new Date();
+  let month = new Date().getMonth() + 1;
+  if (month.toString.length === 1) month = "0" + month;
   const { setUsersData, usersData } = useClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [createClient, setCreateClient] = useState({
@@ -54,42 +58,8 @@ function ClientManager(props) {
     age: 0,
     gender: "",
     height: 0,
-    measurements: [
-      {
-        date: "",
-        weight: 0,
-        physicalActivity: "",
-      },
-    ],
   });
-  function addMeasurement(userDni, newMeasurement) {
-    // We call dispatch function for userData state
-    setUsersData((prevUserData) => {
-      const updatedUserData = prevUserData.map((user) => {
-        if (user.dni === userDni) {
-          return {
-            ...user,
-            measurements: [
-              ...user.measurements,
-              {
-                date: newMeasurement.date,
-                weight: newMeasurement.weight,
-                physicalActivity: newMeasurement.physicalActivity,
-              },
-            ],
-          };
-        }
 
-        return user;
-      });
-      return updatedUserData;
-    });
-  }
-  function addClient(newClient) {
-    setUsersData((prevUserData) => {
-      return [...prevUserData, newClient];
-    });
-  }
   function deleteClient(client) {
     setUsersData((prevUserData) => {
       return prevUserData.filter(
@@ -107,7 +77,6 @@ function ClientManager(props) {
   ];
 
   useEffect(() => {
-
     switch (props.match.params.option) {
       case "add":
         setCreateOpen(true);
@@ -129,6 +98,7 @@ function ClientManager(props) {
       [event.target.name]: event.target.value,
     });
   };
+
   const handleSubmit = () => {
     setUsersData((prevUserData) => {
       return [...prevUserData, createClient];
@@ -138,9 +108,21 @@ function ClientManager(props) {
   const classes = useStyles();
   return (
     <div>
-      <DarkContainer >
+      <DarkContainer
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        <IconButton
+          onClick={() => history.push("/")}
+          style={{ alignSelf: "flex-start", margin: "5px" }}
+        >
+          <ArrowBackRoundedIcon />
+        </IconButton>
         <MaterialTable
-          style={{margin: "50px"}}
+          style={{ width: "80vw" }}
           localization={spanishTable}
           columns={columns}
           data={usersData}
