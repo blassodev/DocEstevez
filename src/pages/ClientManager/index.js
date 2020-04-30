@@ -24,6 +24,11 @@ import * as SC from "./style";
 import { useClient } from "../../hooks/useClient";
 import { useHistory } from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import MuiAlert from "@material-ui/lab/Alert";
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const useStyles = makeStyles((theme) =>
   createStyles({
@@ -51,6 +56,10 @@ function ClientManager(props) {
   if (month.toString.length === 1) month = "0" + month;
   const { setUsersData, usersData } = useClient();
   const [createOpen, setCreateOpen] = useState(false);
+  const [createError, setCreateError] = useState({
+    open: false,
+    message: "",
+  });
   const [createClient, setCreateClient] = useState({
     name: "",
     surname: "",
@@ -100,10 +109,47 @@ function ClientManager(props) {
   };
 
   const handleSubmit = () => {
-    setUsersData((prevUserData) => {
-      return [...prevUserData, createClient];
-    });
-    handleCreateClose();
+    if (createClient.name.length < 4) {
+      setCreateError({
+        error: true,
+        message: "El nombre debe tener 4 caracteres como minimo",
+      });
+    } else if (createClient.surname.length < 4) {
+      setCreateError({
+        error: true,
+        message: "El apellido debe tener 4 caracteres como minimo",
+      });
+    }else if(!/^[0-9]{8,8}[A-Za-z]$/.test(createClient.dni)){
+      setCreateError({
+        error: true,
+        message: "El dni no tiene el formato correcto",
+      });
+    }else if(!/[1-9]/.test(createClient.age)){
+      setCreateError({
+        error: true,
+        message: "La edad tiene que ser un numero",
+      });
+    } else if(!/[1-9]/.test(createClient.height)){
+      setCreateError({
+        error: true,
+        message: "La altura tiene que ser un numero",
+      });
+    }
+    else if(createClient.gender!=="Hombre" && createClient.gender!=="Mujer" ){
+      setCreateError({
+        error: true,
+        message: "El genero tiene que ser un Hombre o Mujer",
+      });
+    } else {
+      setCreateError({
+        error: false,
+        message: "",
+      });
+      setUsersData((prevUserData) => {
+        return [...prevUserData, createClient];
+      });
+      handleCreateClose();
+    }
   };
   const classes = useStyles();
   return (
@@ -178,6 +224,12 @@ function ClientManager(props) {
           </Toolbar>
         </AppBar>
         <SC.DialogForm onSubmit={(e) => handleSubmit(e)}>
+          <Alert
+            severity="error"
+            style={{ display: createError.error ? "inherit" : "none" }}
+          >
+            {createError.message}
+          </Alert>
           <TextField
             label="Nombre"
             name="name"
