@@ -18,6 +18,8 @@ export const BaseComponent = styled.div`
   }
   & a {
     color: white;
+    display:flex;
+    flex-direction: column;
   }
   & svg {
     width: 100px;
