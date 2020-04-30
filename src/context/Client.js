@@ -14,8 +14,43 @@ export function ClientProvider({ children }) {
       measurements: [
         {
           date: "25/04/2020",
-          weight: 74,
-          physicalActivity: "active",
+          weight: 80,
+          physicalActivity: "1",
+        },
+        {
+          date: "26/04/2020",
+          weight: 79.90,
+          physicalActivity: "2",
+        },
+        {
+          date: "27/04/2020",
+          weight: 79.85,
+          physicalActivity: "2",
+        },
+        {
+          date: "28/04/2020",
+          weight: 79.76,
+          physicalActivity: "2",
+        },
+        {
+          date: "29/04/2020",
+          weight: 79.85,
+          physicalActivity: "3",
+        },
+        {
+          date: "30/04/2020",
+          weight: 80,
+          physicalActivity: "3",
+        },
+        {
+          date: "1/05/2020",
+          weight: 79.90,
+          physicalActivity: "4",
+        },
+        {
+          date: "2/04/2020",
+          weight: 79.75,
+          physicalActivity: "1",
         },
       ],
     },
@@ -30,7 +65,42 @@ export function ClientProvider({ children }) {
         {
           date: "25/04/2020",
           weight: 74,
-          physicalActivity: "active",
+          physicalActivity: "1",
+        },
+        {
+          date: "26/04/2020",
+          weight: 74.20,
+          physicalActivity: "2",
+        },
+        {
+          date: "27/04/2020",
+          weight: 74.24,
+          physicalActivity: "2",
+        },
+        {
+          date: "28/04/2020",
+          weight: 74.29,
+          physicalActivity: "2",
+        },
+        {
+          date: "29/04/2020",
+          weight: 74.20,
+          physicalActivity: "3",
+        },
+        {
+          date: "30/04/2020",
+          weight: 74.15,
+          physicalActivity: "3",
+        },
+        {
+          date: "1/05/2020",
+          weight: 74.12,
+          physicalActivity: "4",
+        },
+        {
+          date: "2/04/2020",
+          weight: 74.20,
+          physicalActivity: "1",
         },
       ],
     },
