@@ -34,7 +34,7 @@ const CustomChart = (props) => {
           data={props.data}
           margin={{ top: 20, right: 30, left: 0, bottom: 0 }}
         >
-          <CartesianGrid stroke="rgba(81, 81, 81, 1)" />
+          <CartesianGrid strokeDasharray="5 5" stroke="#eee" /* stroke="rgba(81, 81, 81, 1)" */ />
           <XAxis dataKey="date" />
           <YAxis domain={["dataMin-1", "dataMax+1"]} />
           <Tooltip content={<CustomTooltip />} />

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 function DirectAccessItem(props) {
   function handleOnClick() {}
   return (
-    <SC.BaseComponent onClick={handleOnClick}>
+    <SC.BaseComponent onClick={handleOnClick} light={props.light}>
       <Link to={props.link}>
         {props.children}
         {props.icon}

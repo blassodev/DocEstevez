@@ -17,7 +17,7 @@ export const BaseComponent = styled.div`
     }
   }
   & a {
-    color: white;
+  color: ${props => props.light ? '#000' : '#fff'};
     display:flex;
     flex-direction: column;
   }
