@@ -25,6 +25,7 @@ import { useClient } from "../../hooks/useClient";
 import { useHistory } from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import MuiAlert from "@material-ui/lab/Alert";
+import {LightContainer} from '../../styles/LightContainer'
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -154,7 +155,7 @@ function ClientManager(props) {
   const classes = useStyles();
   return (
     <div>
-      <DarkContainer
+      <LightContainer
         style={{
           display: "flex",
           flexDirection: "column",
@@ -198,7 +199,7 @@ function ClientManager(props) {
             history.push(`/ClientDetails/${rowData.dni}`);
           }}
         />
-      </DarkContainer>
+      </LightContainer>
       <Dialog
         fullScreen
         open={createOpen}
