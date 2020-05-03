@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   RadioGroup,
   Radio,
+  Snackbar,
   FormLabel,
   createStyles,
 } from "@material-ui/core";
@@ -25,7 +26,7 @@ import { useClient } from "../../hooks/useClient";
 import { useHistory } from "react-router-dom";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import MuiAlert from "@material-ui/lab/Alert";
-import {LightContainer} from '../../styles/LightContainer'
+import { LightContainer } from "../../styles/LightContainer";
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -57,6 +58,7 @@ function ClientManager(props) {
   if (month.toString.length === 1) month = "0" + month;
   const { setUsersData, usersData } = useClient();
   const [createOpen, setCreateOpen] = useState(false);
+  const [snackOpen, setSnackOpen] = useState(false);
   const [createError, setCreateError] = useState({
     open: false,
     message: "",
@@ -95,7 +97,12 @@ function ClientManager(props) {
         break;
     }
   }, [props.match.params.option]);
-
+  const handleSnackClose = () => {
+    setSnackOpen(false);
+  };
+  const handleSnackOpen = () => {
+    setSnackOpen(true);
+  };
   const handleCreateOpen = () => {
     setCreateOpen(true);
   };
@@ -120,23 +127,25 @@ function ClientManager(props) {
         error: true,
         message: "El apellido debe tener 4 caracteres como minimo",
       });
-    }else if(!/^[0-9]{8,8}[A-Za-z]$/.test(createClient.dni)){
+    } else if (!/^[0-9]{8,8}[A-Za-z]$/.test(createClient.dni)) {
       setCreateError({
         error: true,
         message: "El dni no tiene el formato correcto",
       });
-    }else if(!/[1-9]/.test(createClient.age)){
+    } else if (!/[1-9]/.test(createClient.age)) {
       setCreateError({
         error: true,
         message: "La edad tiene que ser un numero",
       });
-    } else if(!/[1-9]/.test(createClient.height)){
+    } else if (!/[1-9]/.test(createClient.height)) {
       setCreateError({
         error: true,
         message: "La altura tiene que ser un numero",
       });
-    }
-    else if(createClient.gender!=="Hombre" && createClient.gender!=="Mujer" ){
+    } else if (
+      createClient.gender !== "Hombre" &&
+      createClient.gender !== "Mujer"
+    ) {
       setCreateError({
         error: true,
         message: "El genero tiene que ser un Hombre o Mujer",
@@ -149,6 +158,7 @@ function ClientManager(props) {
       setUsersData((prevUserData) => {
         return [...prevUserData, createClient];
       });
+      handleSnackOpen();
       handleCreateClose();
     }
   };
@@ -291,6 +301,16 @@ function ClientManager(props) {
           </RadioGroup>
         </SC.DialogForm>
       </Dialog>
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={6000}
+        onClose={handleSnackClose}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert onClose={handleSnackClose} severity="success">
+          Usuario creado
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
