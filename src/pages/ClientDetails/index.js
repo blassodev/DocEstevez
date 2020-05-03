@@ -1,16 +1,26 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { DarkContainer } from "../../styles/DarkContainer";
+import { LightContainer } from "../../styles/LightContainer";
 import MaterialTable from "material-table";
 import spanishTable from "../../lang/material-table/spanish.json";
 import { useHistory } from "react-router-dom";
 import { useClient } from "../../hooks/useClient";
 import CustomChart from "../../components/CustomChart";
-import { IconButton } from "@material-ui/core";
+import { IconButton, Dialog, DialogTitle } from "@material-ui/core";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
+import IMCTable from "../../components/IMCTable";
+import BorderAllRoundedIcon from "@material-ui/icons/BorderAllRounded";
 
 function ClientDetails(props) {
   const history = useHistory();
   const { setUsersData, usersData } = useClient();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   function addMeasurement(newMeasurement) {
     // We call dispatch function for userData state
     setUsersData((prevUserData) => {
@@ -62,33 +72,113 @@ function ClientDetails(props) {
   useEffect(() => {
     const measurements = usersData[selectedClientIndex].measurements.map(
       (measurement) => {
-        const imc = Math.round(
-          measurement.weight *
-            Math.pow(usersData[selectedClientIndex].height, 2),
-          2
-        );
+        const imc =
+          Math.round(
+            (measurement.weight /
+              Math.pow(usersData[selectedClientIndex].height, 2)) *
+              100
+          ) / 100;
         let tmb = 0;
         if (usersData[selectedClientIndex].gender === "Hombre") {
-          tmb = Math.round(
-            66 +
-              13.17 * measurement.weight +
-              5 * (5 * usersData[selectedClientIndex].height) -
-              6.75 * usersData[selectedClientIndex].age,
-            2
-          );
+          tmb =
+            Math.round(
+              (66 +
+                13.17 * measurement.weight +
+                5 * (5 * usersData[selectedClientIndex].height) -
+                6.75 * usersData[selectedClientIndex].age) *
+                100
+            ) / 100;
         } else {
-          tmb = Math.round(
-            655 +
-              9.6 * measurement.weight +
-              1.8 * usersData[selectedClientIndex].height +
-              4.7 * usersData[selectedClientIndex].age,
-            2
-          );
+          tmb =
+            Math.round(
+              (655 +
+                9.6 * measurement.weight +
+                1.8 * usersData[selectedClientIndex].height +
+                4.7 * usersData[selectedClientIndex].age) *
+                100
+            ) / 100;
         }
+        let kcal = 0;
+        switch (measurement.physicalActivity) {
+          case "1":
+            kcal = Math.round(tmb * 1.2 * 100) / 100;
+            break;
+          case "2":
+            kcal = Math.round(tmb * 1.375 * 100) / 100;
+            break;
+          case "3":
+            kcal = Math.round(tmb * 1.72 * 100) / 100;
+            break;
+          case "4":
+            kcal = Math.round(tmb * 1.375 * 100) / 100;
+            break;
+          case "5":
+            kcal = Math.round(tmb * 1.9 * 100) / 100;
+            break;
+          default:
+            break;
+        }
+        let bodyType = 0;
+
+        if (
+          usersData[selectedClientIndex].age <= 65 &&
+          usersData[selectedClientIndex].age >= 20
+        ) {
+          if (imc <= 16) {
+            bodyType = 7;
+          } else if (imc >= 16 && imc <= 16.99) {
+            bodyType = 8;
+          } else if (imc >= 17 && imc <= 18.49) {
+            bodyType = 9;
+          } else if (imc >= 18.5 && imc <= 24.99) {
+            bodyType = 10;
+          } else if (imc >= 25 && imc <= 29.99) {
+            bodyType = 11;
+          } else if (imc >= 30 && imc <= 34.99) {
+            bodyType = 12;
+          } else if (imc >= 35 && imc <= 39.99) {
+            bodyType = 13;
+          } else if (imc >= 40) {
+            bodyType = 14;
+          }
+        } else if (usersData[selectedClientIndex].age > 65) {
+          if (usersData[selectedClientIndex].gender === "Mujer") {
+            if (imc <= 21.9) {
+              bodyType = 1;
+            } else if (imc >= 22 && imc <= 27) {
+              bodyType = 2;
+            } else if (imc >= 27.1 && imc <= 32) {
+              bodyType = 3;
+            } else if (imc >= 32.1 && imc <= 37) {
+              bodyType = 4;
+            } else if (imc >= 37.1 && imc <= 41.9) {
+              bodyType = 5;
+            } else if (imc >= 42) {
+              bodyType = 6;
+            }
+          } else {
+            if (imc <= 21.9) {
+              bodyType = 1;
+            } else if (imc >= 22 && imc <= 27) {
+              bodyType = 2;
+            } else if (imc >= 27.1 && imc <= 30) {
+              bodyType = 3;
+            } else if (imc >= 30.1 && imc <= 35) {
+              bodyType = 4;
+            } else if (imc >= 35.1 && imc <= 39.9) {
+              bodyType = 5;
+            } else if (imc >= 40) {
+              bodyType = 6;
+            }
+          }
+        }
+        console.log(bodyType)
         return {
           ...measurement,
           imc: imc,
           tmb: tmb,
+          kcal: kcal,
+          bodyType: bodyType,
         };
       }
     );
@@ -111,6 +201,27 @@ function ClientDetails(props) {
     { title: "Peso", field: "weight" },
     { title: "IMC", field: "imc" },
     { title: "TMB", field: "tmb" },
+    { title: "Calorias", field: "kcal" },
+    {
+      title: "Interpretación",
+      field: "bodyType",
+      lookup: {
+        1: "Bajo peso",
+        2: "Normopeso",
+        3: "Sobrepeso",
+        4: "Obesidad I",
+        5: "Obesidad II",
+        6: "Obesidad III",
+        7: "Bajo peso muy grave",
+        8: "Bajo peso grave",
+        9: "Bajo peso",
+        10: "Normopeso",
+        11: "Sobrepeso",
+        12: "Obesidad I",
+        13: "Obesidad II",
+        14: "Obesidad III",
+      },
+    },
     {
       title: "Actividad Física",
       field: "physicalActivity",
@@ -125,7 +236,7 @@ function ClientDetails(props) {
   ];
   if (!usersData[selectedClientIndex].measurements) {
     return (
-      <DarkContainer
+      <LightContainer
         style={{
           display: "flex",
           flexDirection: "column",
@@ -147,9 +258,14 @@ function ClientDetails(props) {
             " " +
             usersData[selectedClientIndex].surname
           }
-          options={{
-            exportButton: true,
-          }}
+          actions={[
+            {
+              icon: () => <BorderAllRoundedIcon />,
+              position: "toolbar",
+              tooltip: "Mostrar tabla IMC",
+              onClick: handleOpen,
+            },
+          ]}
           editable={{
             onRowAdd: (newData) =>
               new Promise((resolve, reject) => {
@@ -160,25 +276,24 @@ function ClientDetails(props) {
                     if (month.toString.length === 1) month = "0" + month;
                     newData.date =
                       now.getDate() + "/" + month + "/" + now.getFullYear();
-                    console.log(newData);
                     addMeasurementWNM(newData);
                   }
                   resolve();
                 }, 1000);
               }),
-            onRowDelete: (oldData) =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  resolve();
-                }, 1000);
-              }),
           }}
         />
-      </DarkContainer>
+        <Dialog onClose={handleClose} open={open} maxWidth="md" fullWidth>
+          <DialogTitle id="simple-dialog-title">
+            Tabla de relación de IMC
+          </DialogTitle>
+          <IMCTable />
+        </Dialog>
+      </LightContainer>
     );
   }
   return (
-    <DarkContainer
+    <LightContainer
       style={{
         display: "flex",
         flexDirection: "column",
@@ -204,6 +319,14 @@ function ClientDetails(props) {
         options={{
           exportButton: true,
         }}
+        actions={[
+          {
+            icon: () => <BorderAllRoundedIcon />,
+            position: "toolbar",
+            tooltip: "Mostrar tabla IMC",
+            onClick: handleOpen,
+          },
+        ]}
         editable={{
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
@@ -231,7 +354,14 @@ function ClientDetails(props) {
       <CustomChart
         data={usersData ? usersData[selectedClientIndex].measurements : []}
       />
-    </DarkContainer>
+      <Dialog onClose={handleClose} open={open} maxWidth="md" fullWidth>
+         {" "}
+        <DialogTitle id="simple-dialog-title">
+          Tabla de relación de IMC
+        </DialogTitle>
+        <IMCTable />
+      </Dialog>
+    </LightContainer>
   );
 }
 
