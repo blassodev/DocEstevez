@@ -253,6 +253,7 @@ function ClientDetails(props) {
         </IconButton>
         <MaterialTable
           localization={spanishTable}
+          style={{width: "80vw"}}
           columns={columns}
           data={[]}
           title={
