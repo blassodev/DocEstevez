@@ -43,8 +43,9 @@ function ClientDetails(props) {
       });
       return updatedUserData;
     });
+    completeMeasurements();
   }
-  function addMeasurementWNM(newMeasurement) {
+  async function addMeasurementWNM(newMeasurement) {
     // We call dispatch function for userData state
     setUsersData((prevUserData) => {
       const updatedUserData = prevUserData.map((user) => {
@@ -62,150 +63,157 @@ function ClientDetails(props) {
         }
 
         return user;
+        
       });
       return updatedUserData;
     });
+    await completeMeasurements(); 
   }
   const selectedClientIndex = usersData.findIndex(
     (client) => client.dni === props.match.params.dni
   );
-  useEffect(() => {
-    if (usersData[selectedClientIndex].measurements) {
-      const measurements = usersData[selectedClientIndex].measurements.map(
-        (measurement) => {
-          const imc =
+  function completeMeasurements() {
+    console.log(usersData[selectedClientIndex]);
+    const measurements = usersData[selectedClientIndex].measurements.map(
+      (measurement) => {
+        const imc =
+          Math.round(
+            (measurement.weight /
+              Math.pow(usersData[selectedClientIndex].height, 2)) *
+              100
+          ) / 100;
+        let tmb = 0;
+        if (usersData[selectedClientIndex].gender === "Hombre") {
+          tmb =
             Math.round(
-              (measurement.weight /
-                Math.pow(usersData[selectedClientIndex].height, 2)) *
+              (66 +
+                13.17 * measurement.weight +
+                5 * (5 * usersData[selectedClientIndex].height) -
+                6.75 * usersData[selectedClientIndex].age) *
                 100
             ) / 100;
-          let tmb = 0;
-          if (usersData[selectedClientIndex].gender === "Hombre") {
-            tmb =
-              Math.round(
-                (66 +
-                  13.17 * measurement.weight +
-                  5 * (5 * usersData[selectedClientIndex].height) -
-                  6.75 * usersData[selectedClientIndex].age) *
-                  100
-              ) / 100;
-          } else {
-            tmb =
-              Math.round(
-                (655 +
-                  9.6 * measurement.weight +
-                  1.8 * usersData[selectedClientIndex].height +
-                  4.7 * usersData[selectedClientIndex].age) *
-                  100
-              ) / 100;
-          }
-          let kcal = 0;
-          switch (measurement.physicalActivity) {
-            case "1":
-              kcal = Math.round(tmb * 1.2 * 100) / 100;
-              break;
-            case "2":
-              kcal = Math.round(tmb * 1.375 * 100) / 100;
-              break;
-            case "3":
-              kcal = Math.round(tmb * 1.72 * 100) / 100;
-              break;
-            case "4":
-              kcal = Math.round(tmb * 1.375 * 100) / 100;
-              break;
-            case "5":
-              kcal = Math.round(tmb * 1.9 * 100) / 100;
-              break;
-            default:
-              break;
-          }
-          let bodyType = 0;
+        } else {
+          tmb =
+            Math.round(
+              (655 +
+                9.6 * measurement.weight +
+                1.8 * usersData[selectedClientIndex].height +
+                4.7 * usersData[selectedClientIndex].age) *
+                100
+            ) / 100;
+        }
+        let kcal = 0;
+        switch (measurement.physicalActivity) {
+          case "1":
+            kcal = Math.round(tmb * 1.2 * 100) / 100;
+            break;
+          case "2":
+            kcal = Math.round(tmb * 1.375 * 100) / 100;
+            break;
+          case "3":
+            kcal = Math.round(tmb * 1.72 * 100) / 100;
+            break;
+          case "4":
+            kcal = Math.round(tmb * 1.375 * 100) / 100;
+            break;
+          case "5":
+            kcal = Math.round(tmb * 1.9 * 100) / 100;
+            break;
+          default:
+            break;
+        }
+        let bodyType = 0;
 
-          if (
-            usersData[selectedClientIndex].age <= 65 &&
-            usersData[selectedClientIndex].age >= 20
-          ) {
-            if (imc <= 16) {
-              bodyType = 7;
-            } else if (imc >= 16 && imc <= 16.99) {
-              bodyType = 8;
-            } else if (imc >= 17 && imc <= 18.49) {
-              bodyType = 9;
-            } else if (imc >= 18.5 && imc <= 24.99) {
-              bodyType = 10;
-            } else if (imc >= 25 && imc <= 29.99) {
-              bodyType = 11;
-            } else if (imc >= 30 && imc <= 34.99) {
-              bodyType = 12;
-            } else if (imc >= 35 && imc <= 39.99) {
-              bodyType = 13;
-            } else if (imc >= 40) {
-              bodyType = 14;
+        if (
+          usersData[selectedClientIndex].age <= 65 &&
+          usersData[selectedClientIndex].age >= 20
+        ) {
+          if (imc <= 16) {
+            bodyType = 7;
+          } else if (imc >= 16 && imc <= 16.99) {
+            bodyType = 8;
+          } else if (imc >= 17 && imc <= 18.49) {
+            bodyType = 9;
+          } else if (imc >= 18.5 && imc <= 24.99) {
+            bodyType = 10;
+          } else if (imc >= 25 && imc <= 29.99) {
+            bodyType = 11;
+          } else if (imc >= 30 && imc <= 34.99) {
+            bodyType = 12;
+          } else if (imc >= 35 && imc <= 39.99) {
+            bodyType = 13;
+          } else if (imc >= 40) {
+            bodyType = 14;
+          }
+        } else if (usersData[selectedClientIndex].age > 65) {
+          if (usersData[selectedClientIndex].gender === "Mujer") {
+            if (imc <= 21.9) {
+              bodyType = 1;
+            } else if (imc >= 22 && imc <= 27) {
+              bodyType = 2;
+            } else if (imc >= 27.1 && imc <= 32) {
+              bodyType = 3;
+            } else if (imc >= 32.1 && imc <= 37) {
+              bodyType = 4;
+            } else if (imc >= 37.1 && imc <= 41.9) {
+              bodyType = 5;
+            } else if (imc >= 42) {
+              bodyType = 6;
             }
-          } else if (usersData[selectedClientIndex].age > 65) {
-            if (usersData[selectedClientIndex].gender === "Mujer") {
-              if (imc <= 21.9) {
-                bodyType = 1;
-              } else if (imc >= 22 && imc <= 27) {
-                bodyType = 2;
-              } else if (imc >= 27.1 && imc <= 32) {
-                bodyType = 3;
-              } else if (imc >= 32.1 && imc <= 37) {
-                bodyType = 4;
-              } else if (imc >= 37.1 && imc <= 41.9) {
-                bodyType = 5;
-              } else if (imc >= 42) {
-                bodyType = 6;
-              }
-            } else {
-              if (imc <= 21.9) {
-                bodyType = 1;
-              } else if (imc >= 22 && imc <= 27) {
-                bodyType = 2;
-              } else if (imc >= 27.1 && imc <= 30) {
-                bodyType = 3;
-              } else if (imc >= 30.1 && imc <= 35) {
-                bodyType = 4;
-              } else if (imc >= 35.1 && imc <= 39.9) {
-                bodyType = 5;
-              } else if (imc >= 40) {
-                bodyType = 6;
-              }
+          } else {
+            if (imc <= 21.9) {
+              bodyType = 1;
+            } else if (imc >= 22 && imc <= 27) {
+              bodyType = 2;
+            } else if (imc >= 27.1 && imc <= 30) {
+              bodyType = 3;
+            } else if (imc >= 30.1 && imc <= 35) {
+              bodyType = 4;
+            } else if (imc >= 35.1 && imc <= 39.9) {
+              bodyType = 5;
+            } else if (imc >= 40) {
+              bodyType = 6;
             }
           }
+        }
+        return {
+          ...measurement,
+          imc: imc,
+          tmb: tmb,
+          kcal: kcal,
+          bodyType: bodyType,
+        };
+      }
+    );
+    setUsersData((prevUserData) => {
+      const updatedUserData = prevUserData.map((user) => {
+        if (user.dni === props.match.params.dni) {
           return {
-            ...measurement,
-            imc: imc,
-            tmb: tmb,
-            kcal: kcal,
-            bodyType: bodyType,
+            ...user,
+            measurements: measurements,
           };
         }
-      );
-      setUsersData((prevUserData) => {
-        const updatedUserData = prevUserData.map((user) => {
-          if (user.dni === props.match.params.dni) {
-            return {
-              ...user,
-              measurements: measurements,
-            };
-          }
-          return user;
-        });
-        return updatedUserData;
+        return user;
       });
+      return updatedUserData;
+    });
+  }
+  useEffect(() => {
+    if (usersData[selectedClientIndex].measurements) {
+      completeMeasurements();
     }
-  }, [props.match.params.dni, setUsersData, selectedClientIndex]);
+  }, []);
 
   const columns = [
     { title: "Fecha", field: "date", editable: "never" },
     { title: "Peso", field: "weight" },
-    { title: "IMC", field: "imc" },
-    { title: "TMB", field: "tmb" },
-    { title: "Calorias", field: "kcal" },
+    { title: "IMC", field: "imc", editable: "never" },
+    { title: "TMB", field: "tmb", editable: "never" },
+    { title: "Calorias", field: "kcal", editable: "never" },
     {
       title: "Interpretación",
       field: "bodyType",
+      editable: "never",
       lookup: {
         0: "Menor de 20",
         1: "Bajo peso",
@@ -253,7 +261,7 @@ function ClientDetails(props) {
         </IconButton>
         <MaterialTable
           localization={spanishTable}
-          style={{width: "80vw"}}
+          style={{ width: "80vw" }}
           columns={columns}
           data={[]}
           title={
@@ -280,6 +288,7 @@ function ClientDetails(props) {
                     newData.date =
                       now.getDate() + "/" + month + "/" + now.getFullYear();
                     addMeasurementWNM(newData);
+                    completeMeasurements();
                   }
                   resolve();
                 }, 1000);
