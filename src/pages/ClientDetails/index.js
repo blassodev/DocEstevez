@@ -21,7 +21,27 @@ function ClientDetails(props) {
   const handleClose = () => {
     setOpen(false);
   };
-  function addMeasurement(newMeasurement) {
+  const deleteMeasurement = (oldMeasurement) => {
+    const measurements = usersData[selectedClientIndex].measurements.filter(
+      (_, idx) =>
+        idx !==
+        usersData[selectedClientIndex].measurements.indexOf(oldMeasurement)
+    );
+    setUsersData((prevUserData) => {
+      const updatedUserData = prevUserData.map((user) => {
+        if (user.dni === props.match.params.dni) {
+          return {
+            ...user,
+            measurements: measurements,
+          };
+        }
+
+        return user;
+      });
+      return updatedUserData;
+    });
+  };
+  const addMeasurement = (newMeasurement) => {
     // We call dispatch function for userData state
     setUsersData((prevUserData) => {
       const updatedUserData = prevUserData.map((user) => {
@@ -31,7 +51,7 @@ function ClientDetails(props) {
             measurements: [
               ...user.measurements,
               {
-                ...newMeasurement
+                ...newMeasurement,
               },
             ],
           };
@@ -41,8 +61,7 @@ function ClientDetails(props) {
       });
       return updatedUserData;
     });
-    completeMeasurements();
-  }
+  };
   function addMeasurementWNM(newMeasurement) {
     // We call dispatch function for userData state
     setUsersData((prevUserData) => {
@@ -462,7 +481,7 @@ function ClientDetails(props) {
                     newData.weight,
                     newData.physicalActivity
                   );
-                  addMeasurement({...newData, ...calculatedNewData});
+                  addMeasurement({ ...newData, ...calculatedNewData });
                 }
                 resolve();
               }, 1000);
@@ -470,6 +489,9 @@ function ClientDetails(props) {
           onRowDelete: (oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
+                
+                  deleteMeasurement(oldData)
+                
                 resolve();
               }, 1000);
             }),
