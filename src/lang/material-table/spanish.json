@@ -29,6 +29,8 @@
     "filterRow": {
       "filterTooltip": "Filtro"
     },
+    "deleteTooltip": "Eliminar",
+    "addTooltip": "Añadir",
     "editRow": {
       "deleteText": "Estas seguro de querer eliminar esta fila?",
       "cancelTooltip": "Cancelar",
