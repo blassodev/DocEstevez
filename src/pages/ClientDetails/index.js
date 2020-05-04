@@ -6,15 +6,20 @@ import spanishTable from "../../lang/material-table/spanish.json";
 import { useHistory } from "react-router-dom";
 import { useClient } from "../../hooks/useClient";
 import CustomChart from "../../components/CustomChart";
-import { IconButton, Dialog, DialogTitle } from "@material-ui/core";
+import { IconButton, Dialog, DialogTitle, Snackbar } from "@material-ui/core";
+import MuiAlert from "@material-ui/lab/Alert";
 import ArrowBackRoundedIcon from "@material-ui/icons/ArrowBackRounded";
 import IMCTable from "../../components/IMCTable";
 import BorderAllRoundedIcon from "@material-ui/icons/BorderAllRounded";
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 function ClientDetails(props) {
   const history = useHistory();
   const { setUsersData, usersData } = useClient();
   const [open, setOpen] = useState(false);
+  const [errorOpen, setErrorOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -471,25 +476,32 @@ function ClientDetails(props) {
           onRowAdd: (newData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                {
-                  const now = new Date();
-                  let month = new Date().getMonth() + 1;
-                  if (month.toString.length === 1) month = "0" + month;
-                  newData.date =
-                    now.getDate() + "/" + month + "/" + now.getFullYear();
-                  const calculatedNewData = completeMeasurements(
-                    newData.weight,
-                    newData.physicalActivity
-                  );
-                  addMeasurement({ ...newData, ...calculatedNewData });
-                }
+                
+                  if(newData.weight && newData.physicalActivity){
+                    const now = new Date();
+                    let month = new Date().getMonth() + 1;
+                    if (month.toString.length === 1) month = "0" + month;
+                    newData.date =
+                      now.getDate() + "/" + month + "/" + now.getFullYear();
+                    const calculatedNewData = completeMeasurements(
+                      newData.weight,
+                      newData.physicalActivity
+                    );
+                    addMeasurement({ ...newData, ...calculatedNewData });
+                  }else{
+                    setErrorOpen(true);
+                    reject();
+                  }
+                  
+                
                 resolve();
               }, 1000);
             }),
           onRowDelete: (oldData) =>
             new Promise((resolve, reject) => {
               setTimeout(() => {
-                
+              
+
                   deleteMeasurement(oldData)
                 
                 resolve();
@@ -508,6 +520,16 @@ function ClientDetails(props) {
         </DialogTitle>
         <IMCTable />
       </Dialog>
+      <Snackbar
+        open={errorOpen}
+        autoHideDuration={6000}
+        onClose={()=>setErrorOpen(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+      >
+        <Alert onClose={()=>setErrorOpen(false)} severity="error">
+          Debes cubrir todos los campos
+        </Alert>
+      </Snackbar>
     </LightContainer>
   );
 }
