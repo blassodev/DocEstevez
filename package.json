@@ -44,7 +44,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^8.2.3",
+    "electron": "^22.3.25",
     "foreman": "^3.0.1",
     "prettier": "2.0.5"
   }
